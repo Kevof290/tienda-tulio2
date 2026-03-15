@@ -17,22 +17,22 @@ const Home = () => {
     {
       img: imgBelleza,
       nombre: "Belleza",
-      desc: "Shampoo de Tulio y más"
+      desc: "Shampoo de Tulio y más",
     },
     {
       img: imgAlimentos,
       nombre: "Alimentos",
-      desc: "Snacks de Patana"
+      desc: "Snacks de Patana",
     },
     {
       img: imgLibros,
       nombre: "Libros",
-      desc: "Reportajes de Bodoque"
+      desc: "Reportajes de Bodoque",
     },
     {
       img: imgJuguetes,
       nombre: "Juguetes",
-      desc: "Muñecos del elenco"
+      desc: "Muñecos del elenco",
     },
   ];
 
@@ -130,7 +130,10 @@ const Home = () => {
         <div className="row g-3">
           {categorias.map((cat) => (
             <div key={cat.nombre} className="col-6 col-md-3">
-              <Link to="/gallery" className="text-decoration-none">
+              <Link
+                to={`/gallery?category=${cat.nombre}`}
+                className="text-decoration-none"
+              >
                 <div
                   className="card h-100 text-center shadow-sm border-0"
                   style={{ cursor: "pointer", overflow: "hidden" }}
@@ -141,10 +144,9 @@ const Home = () => {
                     style={{
                       height: "400px",
                       width: "100%",
-                      objectFit: "cover"
+                      objectFit: "cover",
                     }}
                   />
-
                   <div className="card-body">
                     <div className="fw-bold" style={{ color: "#1B2A6B" }}>
                       {cat.nombre}
