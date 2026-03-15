@@ -72,10 +72,11 @@ describe('POST /api/users/login', () => {
 // PUBLICACIONES
 describe('GET /api/posts', () => {
 
-  it('debe responder 401 sin token', async () => {
+  it('debe responder 200 sin token', async () => {
     const res = await request(app)
       .get('/api/posts')
-    expect(res.status).toBe(401)
+    expect(res.status).toBe(200)
+    expect(Array.isArray(res.body)).toBe(true)
   })
 
   it('debe responder 200 con token válido', async () => {
