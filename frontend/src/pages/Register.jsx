@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../services/api'
 import logo from '../assets/img/logo.png'
+import { useAuth } from '../context/AuthContext'
 
 const Register = () => {
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const [formData, setFormData] = useState({
     name:     '',
@@ -29,7 +31,13 @@ const handleChange = (e) => {
 
     try {
       await api.post('/users/register', formData)
-      navigate('/login')
+
+      const res = await api.post('/users/login', {
+        email:    formData.email,
+        password: formData.password
+      })
+      login(res.data.token, res.data.user)
+      navigate('/profile')
 
     } catch (err) {
       setError('Error al registrarse, intenta de nuevo')
