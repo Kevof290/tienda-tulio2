@@ -94,6 +94,11 @@ const Home = () => {
               >
                 <h2 className="fw-bold">{slide.titulo}</h2>
                 <p>{slide.sub}</p>
+                {i === 0 && (
+                  <Link to="/gallery" className="btn btn-warning fw-bold">
+                    Ver tienda →
+                  </Link>
+                )}
                 {i === slides.length - 1 && !user && (
                   <Link to="/register" className="btn btn-warning fw-bold">
                     Crear cuenta gratis
