@@ -1,72 +1,78 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import api from '../services/api'
-import ProductCard from '../components/ProductCard'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import api from "../services/api";
+import ProductCard from "../components/ProductCard";
 
 const Profile = () => {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  const [misPosts,    setMisPosts]    = useState([])
-  const [favoritos,   setFavoritos]   = useState([])
-  const [tabActiva,   setTabActiva]   = useState('publicaciones')
-  const [loading,     setLoading]     = useState(true)
+  const [misPosts, setMisPosts] = useState([]);
+  const [favoritos, setFavoritos] = useState([]);
+  const [tabActiva, setTabActiva] = useState("publicaciones");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [postsRes, favsRes] = await Promise.all([
-          api.get('/posts/user/mine'),
-          api.get('/favorites')
-        ])
-        setMisPosts(postsRes.data)
-        setFavoritos(favsRes.data)
+          api.get("/posts/user/mine"),
+          api.get("/favorites"),
+        ]);
+        setMisPosts(postsRes.data);
+        setFavoritos(favsRes.data);
       } catch (err) {
-        console.error('Error al cargar datos del perfil')
+        console.error("Error al cargar datos del perfil");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchData()
-  }, [])
+    };
+    fetchData();
+  }, []);
 
   const handleLogout = () => {
-    logout()
-    navigate('/')
-  }
+    logout();
+    navigate("/");
+  };
 
   const handleEliminarPost = async (postId) => {
-    if (!window.confirm('¿Estás seguro de eliminar esta publicación?')) return
+    if (!window.confirm("¿Estás seguro de eliminar esta publicación?")) return;
     try {
-      await api.delete(`/posts/${postId}`)
-      setMisPosts(misPosts.filter(p => p.id !== postId))
+      await api.delete(`/posts/${postId}`);
+      setMisPosts(misPosts.filter((p) => p.id !== postId));
     } catch (err) {
-      console.error('Error al eliminar publicación')
+      console.error("Error al eliminar publicación");
     }
-  }
+  };
 
   return (
     <div className="container my-4">
       <div className="row g-4">
-
         <div className="col-md-3">
-          <div className="card shadow-sm border-0 text-center p-3"
-               style={{ backgroundColor: '#F5C518' }}>
-
+          <div
+            className="card shadow-sm border-0 text-center p-3"
+            style={{ backgroundColor: "#F5C518" }}
+          >
             {user?.picture ? (
               <img
                 src={user.picture}
                 alt="Avatar"
                 className="rounded-circle mx-auto mb-2"
-                style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                style={{ width: "80px", height: "80px", objectFit: "cover" }}
               />
             ) : (
-              <div className="rounded-circle mx-auto mb-2 d-flex
+              <div
+                className="rounded-circle mx-auto mb-2 d-flex
                               align-items-center justify-content-center
                               fw-bold fs-3"
-                   style={{ width: '80px', height: '80px',
-                            backgroundColor: '#1B2A6B', color: 'white' }}>
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  backgroundColor: "#1B2A6B",
+                  color: "white",
+                }}
+              >
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
             )}
@@ -91,7 +97,7 @@ const Profile = () => {
             {/* Botones */}
             <button
               className="btn btn-dark btn-sm w-100 mb-2"
-              onClick={() => navigate('/create')}
+              onClick={() => navigate("/create")}
             >
               + Nueva publicación
             </button>
@@ -101,27 +107,25 @@ const Profile = () => {
             >
               Cerrar sesión
             </button>
-
           </div>
         </div>
 
         <div className="col-md-9">
-
           {/* Tabs */}
           <div className="d-flex gap-2 mb-4">
             <button
               className={`btn btn-sm fw-bold ${
-                tabActiva === 'publicaciones' ? 'btn-dark' : 'btn-outline-dark'
+                tabActiva === "publicaciones" ? "btn-dark" : "btn-outline-dark"
               }`}
-              onClick={() => setTabActiva('publicaciones')}
+              onClick={() => setTabActiva("publicaciones")}
             >
               📦 Mis publicaciones
             </button>
             <button
               className={`btn btn-sm fw-bold ${
-                tabActiva === 'favoritos' ? 'btn-dark' : 'btn-outline-dark'
+                tabActiva === "favoritos" ? "btn-dark" : "btn-outline-dark"
               }`}
-              onClick={() => setTabActiva('favoritos')}
+              onClick={() => setTabActiva("favoritos")}
             >
               ❤️ Mis favoritos
             </button>
@@ -129,19 +133,18 @@ const Profile = () => {
 
           {loading && (
             <div className="text-center py-5">
-              <div className="spinner-border"
-                   style={{ color: '#F5C518' }}/>
+              <div className="spinner-border" style={{ color: "#F5C518" }} />
             </div>
           )}
 
-          {!loading && tabActiva === 'publicaciones' && (
+          {!loading && tabActiva === "publicaciones" && (
             <>
               {misPosts.length === 0 ? (
                 <div className="text-center py-5 text-muted">
                   <p>No tienes publicaciones aún</p>
                   <button
                     className="btn btn-warning fw-bold"
-                    onClick={() => navigate('/create')}
+                    onClick={() => navigate("/create")}
                   >
                     + Crear primera publicación
                   </button>
@@ -155,13 +158,22 @@ const Profile = () => {
                           post={post}
                           onClick={() => navigate(`/product/${post.id}`)}
                         />
-                        {/* Botón eliminar sobre la card */}
+                        <button
+                          className="btn btn-warning btn-sm position-absolute"
+                          style={{ top: "8px", right: "48px" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/edit/${post.id}`);
+                          }}
+                        >
+                          ✏️
+                        </button>
                         <button
                           className="btn btn-danger btn-sm position-absolute"
-                          style={{ top: '8px', right: '8px' }}
+                          style={{ top: "8px", right: "8px" }}
                           onClick={(e) => {
-                            e.stopPropagation()
-                            handleEliminarPost(post.id)
+                            e.stopPropagation();
+                            handleEliminarPost(post.id);
                           }}
                         >
                           🗑️
@@ -174,14 +186,14 @@ const Profile = () => {
             </>
           )}
 
-          {!loading && tabActiva === 'favoritos' && (
+          {!loading && tabActiva === "favoritos" && (
             <>
               {favoritos.length === 0 ? (
                 <div className="text-center py-5 text-muted">
                   <p>No tienes favoritos aún</p>
                   <button
                     className="btn btn-warning fw-bold"
-                    onClick={() => navigate('/gallery')}
+                    onClick={() => navigate("/gallery")}
                   >
                     Explorar tienda
                   </button>
@@ -200,11 +212,10 @@ const Profile = () => {
               )}
             </>
           )}
-
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
