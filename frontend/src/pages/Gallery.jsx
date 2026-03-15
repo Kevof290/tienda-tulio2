@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
 import ProductCard from '../components/ProductCard'
 
 const Gallery = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const [posts,    setPosts]    = useState([])
   const [loading,  setLoading]  = useState(true)
   const [error,    setError]    = useState(null)
 
   const [busqueda,  setBusqueda]  = useState('')
-  const [categoria, setCategoria] = useState('Todos')
+  const [categoria, setCategoria] = useState(
+    searchParams.get('category') || 'Todos'
+  )
 
   const categorias = ['Todos', 'Belleza', 'Alimentos', 'Libros', 'Juguetes']
 
