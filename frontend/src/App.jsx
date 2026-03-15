@@ -30,7 +30,6 @@ const App = () => {
           <Route path="/gallery"      element={<Gallery />} />
           <Route path="/gallerydemo" element={<GalleryDemo />} />
 
-  // Quito el ProtectedRoute para visualizacion de las paginas privadas.
           <Route path="/product/:id" element={
             <ProtectedRoute><ProductDetail /></ProtectedRoute>
           }/>
