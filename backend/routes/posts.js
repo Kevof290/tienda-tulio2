@@ -18,7 +18,7 @@ router.get('/user/mine', verificarToken, async (req, res) => {
   }
 })
 
-router.get('/', verificarToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const posts = await getAllPosts()
     res.json(posts)
