@@ -9,12 +9,13 @@ import Home            from './pages/Home'
 import Login           from './pages/Login'
 import Register        from './pages/Register'
 import GalleryDemo from './pages/GalleryDemo'
+import Gallery         from './pages/Gallery'
 
 // Páginas privadas
-import Gallery         from './pages/Gallery'
 import ProductDetail   from './pages/ProductDetail'
 import Profile         from './pages/Profile'
 import CreatePost      from './pages/CreatePost'
+import EditPost        from './pages/EditPost'
 
 
 const App = () => {
@@ -26,16 +27,21 @@ const App = () => {
           <Route path="/"           element={<Home />} />
           <Route path="/login"      element={<Login />} />
           <Route path="/register"   element={<Register />} />
+          <Route path="/gallery"      element={<Gallery />} />
           <Route path="/gallerydemo" element={<GalleryDemo />} />
 
   // Quito el ProtectedRoute para visualizacion de las paginas privadas.
-          <Route path="/gallery"    element={<Gallery />
+          <Route path="/product/:id" element={
+            <ProtectedRoute><ProductDetail /></ProtectedRoute>
           }/>
-          <Route path="/product/:id" element={<ProductDetail />
+          <Route path="/profile"     element={
+            <ProtectedRoute><Profile /></ProtectedRoute>
           }/>
-          <Route path="/profile"    element={<Profile />
+          <Route path="/create"      element={
+            <ProtectedRoute><CreatePost /></ProtectedRoute>
           }/>
-          <Route path="/create"     element={<CreatePost />
+          <Route path="/edit/:id" element={
+            <ProtectedRoute><EditPost /></ProtectedRoute>
           }/>
 
         </Routes>
