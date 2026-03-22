@@ -1,4 +1,3 @@
--- ── Tabla users
 CREATE TABLE IF NOT EXISTS users (
   id         SERIAL PRIMARY KEY,
   name       VARCHAR(100) NOT NULL,
@@ -8,7 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
--- ── Tabla posts
 CREATE TABLE IF NOT EXISTS posts (
   id          SERIAL PRIMARY KEY,
   title       VARCHAR(200) NOT NULL,
@@ -21,7 +19,6 @@ CREATE TABLE IF NOT EXISTS posts (
   created_at  TIMESTAMP DEFAULT NOW()
 );
 
--- ── Tabla favorites
 CREATE TABLE IF NOT EXISTS favorites (
   id         SERIAL PRIMARY KEY,
   user_id    INT REFERENCES users(id) ON DELETE CASCADE,
@@ -29,7 +26,3 @@ CREATE TABLE IF NOT EXISTS favorites (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(user_id, post_id)
 );
-
--- Crear usuarios de prueba usando el endpoint:
--- POST http://localhost:3001/api/users/register
--- Body: { "name": "Tulio Triviño", "email": "tulio@31minutos.cl", "password": "password123" }
