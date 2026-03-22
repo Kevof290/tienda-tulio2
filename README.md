@@ -1,17 +1,20 @@
 # 🛒 La Tienda de Tulio
 
-Tiemda tematica basada en el programa de televisión chileno **31 Minutos**, donde los personajes venden sus propios productos.
+E-commerce temático basado en el programa de televisión chileno **31 Minutos**, donde los personajes venden sus propios productos.
+
+🌐 **Demo en producción:** [https://tienda-de-tulio.vercel.app](https://tienda-de-tulio.vercel.app)
 
 ---
 
 ## 📺 Descripción
 
-La Tienda de Tulio es una aplicación web fullstack de tipo marketplace donde los usuarios pueden:
+La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los usuarios pueden:
 
 - Explorar productos publicados por otros usuarios
 - Registrarse e iniciar sesión con autenticación JWT
 - Publicar, editar y eliminar sus propios productos
 - Guardar productos en favoritos
+- Agregar productos al carrito y proceder al checkout
 - Filtrar productos por categoría y búsqueda en tiempo real
 
 ---
@@ -24,7 +27,7 @@ La Tienda de Tulio es una aplicación web fullstack de tipo marketplace donde lo
 | React 18 | Librería UI principal |
 | Vite | Bundler y servidor de desarrollo |
 | React Router DOM | Navegación entre rutas |
-| Context API | Estado global de sesión |
+| Context API | Estado global de sesión y carrito |
 | Axios | Peticiones HTTP a la API |
 | Bootstrap 5 | Estilos y componentes CSS |
 
@@ -42,67 +45,26 @@ La Tienda de Tulio es una aplicación web fullstack de tipo marketplace donde lo
 | supertest | Tests de rutas API |
 | jest | Framework de testing |
 
----
-
-## 📦 Instalación y uso
-
-### Requisitos previos
-- Node.js instalado
-- PostgreSQL instalado y corriendo
-- npm instalado
+### Deploy
+| Servicio | Uso |
+|---------|-----|
+| Vercel | Frontend |
+| Render | Backend y Base de datos |
 
 ---
 
-### 1. Clonar el repositorio
-```bash
-git clone https://github.com/Kevof290/tienda-tulio2
-cd tu-repositorio
-```
+## ⚓ Hooks utilizados
 
-### 2. Configurar la base de datos
-
-Abre pgAdmin y ejecuta el archivo `backend/script.sql`:
-```sql
--- Crear la base de datos
-CREATE DATABASE tienda_tulio;
-
--- Luego conectarse a tienda_tulio y ejecutar script.sql
-```
-
-### 3. Configurar el Backend
-```bash
-cd backend
-npm install
-```
-
-Crea el archivo `.env` dentro de la carpeta `backend/`:
-```
-PORT=3001
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=tienda_tulio
-DB_USER=postgres
-DB_PASSWORD=tu_password_aqui     ← tu contraseña de PostgreSQL
-JWT_SECRET=tu_clave_secreta_aqui ← cualquier texto secreto
-```
-
-El backend quedará corriendo en `http://localhost:3001`
-
-### 4. Configurar el Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-El frontend quedará corriendo en `http://localhost:5173`
-
-### 5. Crear usuario de prueba
-
-Con ambos servidores corriendo, regístrate directamente en:
-```
-http://localhost:5173/register
-```
+| Hook | Dónde se usa |
+|------|-------------|
+| `useState` | Todos los componentes con estado |
+| `useEffect` | Gallery, Profile, ProductDetail, EditPost |
+| `useContext` | A través del hook personalizado `useAuth()` y `useCart()` |
+| `useNavigate` | Redirección programática en formularios |
+| `useParams` | ProductDetail y EditPost para leer el :id |
+| `useSearchParams` | Gallery para leer ?categoria= de la URL |
+| `useAuth` (custom) | Estado global de sesión en toda la app |
+| `useCart` (custom) | Estado global del carrito en toda la app |
 
 ---
 
@@ -115,10 +77,94 @@ http://localhost:5173/register
 | `/login` | Público | Inicio de sesión |
 | `/gallery` | Público | Galería de productos |
 | `/gallery-demo` | Público | Galería con datos de prueba |
-| `/product/:id` | Privado | Detalle de producto |
-| `/profile` | Privado | Perfil del usuario |
-| `/create` | Privado | Crear publicación |
-| `/edit/:id` | Privado | Editar publicación |
+| `/product/:id` | Público | Detalle de producto |
+| `/cart` | Público | Carrito de compras |
+| `/profile` | Privado 🔒 | Perfil del usuario |
+| `/create` | Privado 🔒 | Crear publicación |
+| `/edit/:id` | Privado 🔒 | Editar publicación |
+| `/checkout` | Privado 🔒 | Checkout y pago |
+
+---
+
+## 📦 Instalación local
+
+### Requisitos previos
+- Node.js instalado
+- PostgreSQL instalado y corriendo
+- npm instalado
+
+### 1. Clonar el repositorio
+git clone https://github.com/tu-usuario/tu-repositorio.git
+cd tu-repositorio
+```
+
+### 2. Configurar la base de datos
+Abre pgAdmin y ejecuta el archivo `backend/script.sql`:
+```sql
+-- Primero crear la base de datos
+CREATE DATABASE tienda_tulio;
+-- Luego conectarse y ejecutar script.sql
+```
+
+### 3. Configurar el Backend
+```bash
+cd backend
+npm install
+```
+
+Crea el archivo `.env` dentro de `backend/`:
+```
+PORT=3001
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=tienda_tulio
+DB_USER=postgres
+DB_PASSWORD=tu_password_aqui
+JWT_SECRET=tu_clave_secreta_aqui
+
+Poblar con datos de prueba:
+npm run seed
+
+Levantar el servidor:
+npm run dev
+
+### 4. Configurar el Frontend
+cd frontend
+npm install
+
+Crea el archivo `.env` dentro de `frontend/`:
+
+VITE_API_URL=http://localhost:3001/api
+
+
+Levantar el frontend:
+npm run dev
+
+---
+
+## 🧪 Tests
+cd backend
+npm test
+
+Cubre 4 rutas con múltiples escenarios:
+- `POST /api/users/register` → 201 y 400
+- `POST /api/users/login` → 200 y 401
+- `GET /api/posts` → 200
+- `GET /api/posts/:id` → 404
+- `GET /api/favorites` → 200 y 401
+
+---
+
+## 👤 Usuarios de prueba
+
+| Email | Contraseña | Personaje |
+|-------|-----------|-----------|
+| tulio@31minutos.cl | password123 | Tulio Triviño |
+| bodoque@31minutos.cl | password123 | Bodoque |
+| patana@31minutos.cl | password123 | Patana del Monte |
+| juanin@31minutos.cl | password123 | Juánin Juan |
+| calcetin@31minutos.cl | password123 | Calcetín con Rombos Man |
+| policarpo@31minutos.cl | password123 | Policarpo |
 
 ---
 
@@ -127,9 +173,7 @@ http://localhost:5173/register
 La ruta `/gallery-demo` muestra productos de prueba (mock data) para
 demostración visual sin necesidad de tener el backend configurado.
 
-La ruta `/gallery` consume datos reales desde la API REST. Para ver
-productos ahí debes tener el backend corriendo y haber creado
-publicaciones desde `/create`.
+La ruta `/gallery` consume datos reales desde la API REST.
 
 ---
 
