@@ -82,7 +82,7 @@ const Home = () => {
                 src={slide.img}
                 className="d-block w-100"
                 alt={slide.titulo}
-                style={{ height: "480px", objectFit: "cover" }}
+                style={{ height: 'clamp(200px, 50vw, 480px)', objectFit: "cover" }}
               />
               <div
                 className="carousel-caption d-none d-md-block"
