@@ -5,13 +5,22 @@ import api from "../services/api";
 import ProductCard from "../components/ProductCard";
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();  // ← agrega login
   const navigate = useNavigate();
 
-  const [misPosts, setMisPosts] = useState([]);
-  const [favoritos, setFavoritos] = useState([]);
-  const [tabActiva, setTabActiva] = useState("publicaciones");
-  const [loading, setLoading] = useState(true);
+  const [misPosts,    setMisPosts]    = useState([]);
+  const [favoritos,   setFavoritos]   = useState([]);
+  const [tabActiva,   setTabActiva]   = useState("publicaciones");
+  const [loading,     setLoading]     = useState(true);
+
+  // ── Estados del editor de perfil ──
+  const [editando,    setEditando]    = useState(false);
+  const [savingPerfil, setSavingPerfil] = useState(false);
+  const [formPerfil,  setFormPerfil]  = useState({
+    name:    user?.name    || "",
+    email:   user?.email   || "",
+    picture: user?.picture || ""
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +55,26 @@ const Profile = () => {
     }
   };
 
+  const handleEditarPerfil = async (e) => {
+    e.preventDefault();
+    setSavingPerfil(true);
+    try {
+      const res = await api.put("/users/profile", formPerfil);
+      // Actualiza el contexto con los nuevos datos
+      login(res.data.user, sessionStorage.getItem("token"));
+      setEditando(false);
+    } catch (err) {
+      console.error("Error al actualizar perfil");
+    } finally {
+      setSavingPerfil(false);
+    }
+  };
+
   return (
     <div className="container my-4">
       <div className="row g-4">
+
+        {/* ── Sidebar ── */}
         <div className="col-md-3">
           <div
             className="card shadow-sm border-0 text-center p-3"
@@ -64,14 +90,9 @@ const Profile = () => {
             ) : (
               <div
                 className="rounded-circle mx-auto mb-2 d-flex
-                              align-items-center justify-content-center
-                              fw-bold fs-3"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  backgroundColor: "#1B2A6B",
-                  color: "white",
-                }}
+                            align-items-center justify-content-center fw-bold fs-3"
+                style={{ width: "80px", height: "80px",
+                         backgroundColor: "#1B2A6B", color: "white" }}
               >
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
@@ -82,7 +103,6 @@ const Profile = () => {
 
             <hr />
 
-            {/* Stats */}
             <div className="d-flex justify-content-around mb-3">
               <div>
                 <div className="fw-bold fs-5">{misPosts.length}</div>
@@ -94,7 +114,13 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Botones */}
+            {/* Botón editar perfil */}
+            <button
+              className="btn btn-outline-dark btn-sm w-100 mb-2"
+              onClick={() => setEditando(true)}
+            >
+              ✏️ Editar perfil
+            </button>
             <button
               className="btn btn-dark btn-sm w-100 mb-2"
               onClick={() => navigate("/create")}
@@ -110,8 +136,8 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* ── Contenido ── */}
         <div className="col-md-9">
-          {/* Tabs */}
           <div className="d-flex gap-2 mb-4">
             <button
               className={`btn btn-sm fw-bold ${
@@ -214,6 +240,113 @@ const Profile = () => {
           )}
         </div>
       </div>
+
+      {/* ── Modal editar perfil ── */}
+      {editando && (
+        <div
+          className="modal d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+
+              <div className="modal-header"
+                   style={{ backgroundColor: "#F5C518" }}>
+                <h5 className="modal-title fw-bold">✏️ Editar perfil</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setEditando(false)}
+                />
+              </div>
+
+              <div className="modal-body p-4">
+                <form onSubmit={handleEditarPerfil}>
+
+                  <div className="mb-3">
+                    <label className="form-label fw-bold"
+                           style={{ color: "#1B2A6B" }}>
+                      Nombre
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={formPerfil.name}
+                      onChange={(e) => setFormPerfil({
+                        ...formPerfil, name: e.target.value
+                      })}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label fw-bold"
+                           style={{ color: "#1B2A6B" }}>
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={formPerfil.email}
+                      onChange={(e) => setFormPerfil({
+                        ...formPerfil, email: e.target.value
+                      })}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label fw-bold"
+                           style={{ color: "#1B2A6B" }}>
+                      URL de foto de perfil
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="https://mi-foto.com/avatar.jpg"
+                      value={formPerfil.picture}
+                      onChange={(e) => setFormPerfil({
+                        ...formPerfil, picture: e.target.value
+                      })}
+                    />
+                    {/* Preview avatar */}
+                    {formPerfil.picture && (
+                      <img
+                        src={formPerfil.picture}
+                        alt="Preview"
+                        className="rounded-circle mt-2"
+                        style={{ width: "60px", height: "60px",
+                                 objectFit: "cover" }}
+                        onError={(e) => e.target.style.display = "none"}
+                      />
+                    )}
+                  </div>
+
+                  <div className="d-flex gap-2">
+                    <button
+                      type="submit"
+                      className="btn fw-bold"
+                      style={{ backgroundColor: "#F5C518" }}
+                      disabled={savingPerfil}
+                    >
+                      {savingPerfil ? "Guardando..." : "💾 Guardar cambios"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={() => setEditando(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
