@@ -18,6 +18,16 @@ const ProductDetail = () => {
       try {
         const res = await api.get(`/posts/${id}`);
         setPost(res.data);
+
+        try {
+          const favsRes = await api.get("/favorites");
+          const yaEsFavorito = favsRes.data.some(
+            (fav) => fav.id === parseInt(id),
+          );
+          setFavorito(yaEsFavorito);
+        } catch {
+          // Si no está logueado simplemente no hace nada
+        }
       } catch (err) {
         setError("No se pudo cargar el producto");
       } finally {
