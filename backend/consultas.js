@@ -70,7 +70,10 @@ const getAllPosts = async () => {
 // Obtener una publicación por id
 const getPostById = async (id) => {
   const result = await pool.query(
-    `SELECT posts.*, users.name AS seller_name, users.email AS seller_email
+    `SELECT posts.*,
+            users.name    AS seller_name,
+            users.email   AS seller_email,
+            users.picture AS seller_picture
      FROM posts
      JOIN users ON posts.user_id = users.id
      WHERE posts.id = $1`,
