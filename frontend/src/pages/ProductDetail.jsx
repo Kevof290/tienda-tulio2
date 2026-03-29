@@ -113,19 +113,29 @@ const ProductDetail = () => {
 
           <hr />
 
+          {/* Vendedor */}
           <div className="d-flex align-items-center gap-2 mb-3">
-            <div
-              className="rounded-circle d-flex align-items-center
-                            justify-content-center fw-bold text-dark"
-              style={{
-                width: "42px",
-                height: "42px",
-                backgroundColor: "#F5C518",
-                flexShrink: 0,
-              }}
-            >
-              {post.seller_name?.charAt(0).toUpperCase() || "?"}
-            </div>
+            {post.seller_picture ? (
+              <img
+                src={post.seller_picture}
+                alt={post.seller_name}
+                className="rounded-circle"
+                style={{ width: "42px", height: "42px", objectFit: "cover" }}
+              />
+            ) : (
+              <div
+                className="rounded-circle d-flex align-items-center
+                  justify-content-center fw-bold text-dark"
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  backgroundColor: "#F5C518",
+                  flexShrink: 0,
+                }}
+              >
+                {post.seller_name?.charAt(0).toUpperCase() || "?"}
+              </div>
+            )}
             <div>
               <div className="fw-bold">{post.seller_name}</div>
               <div className="text-muted small">Vendedor</div>
