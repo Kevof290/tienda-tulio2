@@ -1,21 +1,22 @@
 # 🛒 La Tienda de Tulio
 
-E-commerce temático basado en el programa de televisión chileno **31 Minutos**, donde los personajes venden sus propios productos.
+E-Commerce temático basado en el programa de televisión chileno **31 Minutos**, donde los personajes venden sus propios productos.
 
-🌐 **Demo en producción:** [https://tienda-de-tulio.vercel.app](https://tienda-de-tulio.vercel.app)
+🌐 **Demo en producción:** [https://tienda-tulio2.vercel.app](https://tienda-tulio2.vercel.app)
 
 ---
 
 ## 📺 Descripción
 
-La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los usuarios pueden:
+La Tienda de Tulio es una aplicación web fullstack de tipo marketplace donde los usuarios pueden:
 
-- Explorar productos publicados por otros usuarios
+- Explorar productos publicados por otros usuarios sin necesidad de registrarse
 - Registrarse e iniciar sesión con autenticación JWT
 - Publicar, editar y eliminar sus propios productos
 - Guardar productos en favoritos
 - Agregar productos al carrito y proceder al checkout
 - Filtrar productos por categoría y búsqueda en tiempo real
+- Editar su perfil personal con nombre, email y foto
 
 ---
 
@@ -37,7 +38,7 @@ La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los
 | Node.js | Entorno de ejecución |
 | Express | Framework servidor REST |
 | PostgreSQL | Base de datos relacional |
-| pg (node-postgres) | Conexión a PostgreSQL |
+| pg (node-postgres) | Conexión a PostgreSQL con Pool |
 | bcryptjs | Encriptación de contraseñas |
 | jsonwebtoken | Autenticación con JWT |
 | cors | Permitir peticiones del frontend |
@@ -48,8 +49,8 @@ La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los
 ### Deploy
 | Servicio | Uso |
 |---------|-----|
-| Vercel | Frontend |
-| Render | Backend y Base de datos |
+| Vercel | Frontend (deploy automático desde GitHub) |
+| Render | Backend Node.js + Base de datos PostgreSQL |
 
 ---
 
@@ -59,9 +60,9 @@ La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los
 |------|-------------|
 | `useState` | Todos los componentes con estado |
 | `useEffect` | Gallery, Profile, ProductDetail, EditPost |
-| `useContext` | A través del hook personalizado `useAuth()` y `useCart()` |
+| `useContext` | A través de los hooks personalizados `useAuth()` y `useCart()` |
 | `useNavigate` | Redirección programática en formularios |
-| `useParams` | ProductDetail y EditPost para leer el :id |
+| `useParams` | ProductDetail y EditPost para leer el :id de la URL |
 | `useSearchParams` | Gallery para leer ?categoria= de la URL |
 | `useAuth` (custom) | Estado global de sesión en toda la app |
 | `useCart` (custom) | Estado global del carrito en toda la app |
@@ -72,17 +73,17 @@ La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los
 
 | Ruta | Acceso | Descripción |
 |------|--------|-------------|
-| `/` | Público | Página principal con carrusel |
+| `/` | Público | Página principal con carrusel y categorías |
 | `/register` | Público | Registro de usuario |
 | `/login` | Público | Inicio de sesión |
-| `/gallery` | Público | Galería de productos |
-| `/gallery-demo` | Público | Galería con datos de prueba |
+| `/gallery` | Público | Galería de productos con búsqueda y filtros |
+| `/gallery-demo` | Público | Galería con datos de prueba (mock data) |
 | `/product/:id` | Público | Detalle de producto |
 | `/cart` | Público | Carrito de compras |
-| `/profile` | Privado 🔒 | Perfil del usuario |
+| `/profile` | Privado 🔒 | Perfil del usuario con editor |
 | `/create` | Privado 🔒 | Crear publicación |
 | `/edit/:id` | Privado 🔒 | Editar publicación |
-| `/checkout` | Privado 🔒 | Checkout y pago |
+| `/checkout` | Privado 🔒 | Checkout y confirmación de pedido |
 
 ---
 
@@ -94,6 +95,7 @@ La Tienda de Tulio es una aplicación web fullstack de tipo e-commerce donde los
 - npm instalado
 
 ### 1. Clonar el repositorio
+```bash
 git clone https://github.com/tu-usuario/tu-repositorio.git
 cd tu-repositorio
 ```
@@ -103,7 +105,7 @@ Abre pgAdmin y ejecuta el archivo `backend/script.sql`:
 ```sql
 -- Primero crear la base de datos
 CREATE DATABASE tienda_tulio;
--- Luego conectarse y ejecutar script.sql
+-- Luego conectarse a tienda_tulio y ejecutar script.sql
 ```
 
 ### 3. Configurar el Backend
@@ -121,30 +123,41 @@ DB_NAME=tienda_tulio
 DB_USER=postgres
 DB_PASSWORD=tu_password_aqui
 JWT_SECRET=tu_clave_secreta_aqui
+```
 
 Poblar con datos de prueba:
+```bash
 npm run seed
+```
 
 Levantar el servidor:
+```bash
 npm run dev
+```
 
 ### 4. Configurar el Frontend
+```bash
 cd frontend
 npm install
+```
 
 Crea el archivo `.env` dentro de `frontend/`:
-
+```
 VITE_API_URL=http://localhost:3001/api
-
+```
 
 Levantar el frontend:
+```bash
 npm run dev
+```
 
 ---
 
 ## 🧪 Tests
+```bash
 cd backend
 npm test
+```
 
 Cubre 4 rutas con múltiples escenarios:
 - `POST /api/users/register` → 201 y 400
@@ -173,10 +186,22 @@ Cubre 4 rutas con múltiples escenarios:
 La ruta `/gallery-demo` muestra productos de prueba (mock data) para
 demostración visual sin necesidad de tener el backend configurado.
 
-La ruta `/gallery` consume datos reales desde la API REST.
+La ruta `/gallery` consume datos reales desde la API REST. Para ver
+productos ahí debes tener el backend corriendo y haber ejecutado
+`npm run seed`.
+
+---
+
+## 🏗️ Decisiones de arquitectura
+
+El frontend y el backend están deployados en servicios separados —
+Vercel y Render respectivamente. Esto permite mantener el código del
+servidor Express exactamente como fue desarrollado, sin adaptaciones
+a un modelo serverless. Las variables de entorno apuntan a la base de
+datos externa en Render tanto en producción como opcionalmente en local.
 
 ---
 
 ## 👥 Autor
 
-Desarrollado por Kevin Alfaro.-
+Desarrollado por **Kevin Alfaro** para el bootcamp de Desafío Latam.
