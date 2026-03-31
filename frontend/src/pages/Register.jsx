@@ -36,7 +36,7 @@ const handleChange = (e) => {
         email:    formData.email,
         password: formData.password
       })
-      login(res.data.token, res.data.user)
+      login(res.data.user, res.data.token)
       navigate('/profile')
 
     } catch (err) {
