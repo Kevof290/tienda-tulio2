@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const ProductDetail = () => {
+  const { user } = useAuth();
   const { addToCart } = useCart();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -152,19 +154,36 @@ const ProductDetail = () => {
             </div>
           </div>
 
+          {/* Botones */}
           <div className="d-flex gap-2">
+            {/* Favoritos */}
             <button
               className={`btn fw-bold ${
                 favorito ? "btn-danger" : "btn-outline-danger"
               }`}
-              onClick={handleFavorito}
+              onClick={() => {
+                if (!user) {
+                  alert("🔐 Debes iniciar sesión para agregar a favoritos");
+                  return;
+                }
+                handleFavorito();
+              }}
             >
               {favorito ? "❤️ Guardado" : "🤍 Agregar a favoritos"}
             </button>
+
+            {/* Carrito */}
             <button
               className="btn fw-bold"
               style={{ backgroundColor: "#F5C518" }}
-              onClick={() => addToCart(post)}
+              onClick={() => {
+                if (!user) {
+                  alert("🔐 Debes iniciar sesión para agregar al carrito");
+                  return;
+                }
+                addToCart(post);
+                navigate("/cart");
+              }}
             >
               🛒 Agregar al carrito
             </button>
