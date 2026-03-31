@@ -23,22 +23,27 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [postsRes, favsRes] = await Promise.all([
-          api.get("/posts/user/mine"),
-          api.get("/favorites"),
-        ]);
-        setMisPosts(postsRes.data);
-        setFavoritos(favsRes.data);
-      } catch (err) {
-        console.error("Error al cargar datos del perfil");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  if (!user) return;
+
+  const fetchData = async () => {
+    try {
+      const [postsRes, favsRes] = await Promise.all([
+        api.get("/posts/user/mine"),
+        api.get("/favorites"),
+      ]);
+
+      setMisPosts(postsRes.data);
+      setFavoritos(favsRes.data);
+
+    } catch (err) {
+      console.error("Error al cargar datos del perfil");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [user]);
 
   const handleLogout = () => {
     logout();
